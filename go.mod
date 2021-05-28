@@ -1,4 +1,4 @@
-module github.com/lblackstone/informer-test
+module github.com/lblackstone/k8s-dynamic-informer
 
 go 1.16
 
