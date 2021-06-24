@@ -33,6 +33,14 @@ func main() {
 	}
 	factory := dynamicinformer.NewDynamicSharedInformerFactory(dc, 0)
 	podInformer := factory.ForResource(schema.GroupVersionResource{Version: "v1", Resource: "pods"})
-	informer.Watch(podInformer, informer.PodLogger)
+	deploymentInformer := factory.ForResource(schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "deployments"})
+
+	stopper := make(chan struct{})
+	defer close(stopper)
+
+	factory.Start(stopper)
+	go informer.DeploymentLogger(stopper, deploymentInformer.Informer())
+	go informer.PodLogger(stopper, podInformer.Informer())
+
 	select {}
 }
